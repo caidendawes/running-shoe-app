@@ -1,79 +1,69 @@
 // server.js
-const express = require("express");
-const bodyParser = require("body-parser");
-const { MongoClient } = require("mongodb");
-require("dotenv").config(); // Loads .env locally if testing
-
+const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const path = require('path');
+require('dotenv').config();
+const { MongoClient } = require('mongodb');
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static("public")); // if your HTML/CSS are in "public"
+// Serve static files (HTML, CSS, images)
+app.use(express.static(path.join(__dirname)));
 
-// MongoDB connection
+// Parse incoming JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// MongoDB setup
 const uri = process.env.MONGODB_URI;
-
+const client = new MongoClient(uri);
 let db;
-let shoesCollection;
 
 async function connectDB() {
-  try {
-    const client = new MongoClient(uri);
-    await client.connect();
-    db = client.db("running_shoes"); // database name
-    shoesCollection = db.collection("shoes"); // collection name
-    console.log("Connected to MongoDB!");
-  } catch (err) {
-    console.error("Failed to connect to MongoDB", err);
-  }
+    try {
+        await client.connect();
+        db = client.db("running-shoe-app");
+        console.log("Connected to MongoDB");
+    } catch (err) {
+        console.error("Failed to connect to MongoDB", err);
+    }
 }
 
 connectDB();
 
-// ------------------- Routes -------------------
-
-// Home route
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+// Routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Add shoe (from your "Find Shoes" form)
-app.post("/add-shoe", async (req, res) => {
-  try {
-    const newShoe = req.body; // expects support, cushion, brand, price, color
-    const result = await shoesCollection.insertOne(newShoe);
-    res.status(201).json({ message: "Shoe added!", id: result.insertedId });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to add shoe" });
-  }
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'about.html'));
 });
 
-// View all shoes
-app.get("/shoes", async (req, res) => {
-  try {
-    const shoes = await shoesCollection.find({}).toArray();
-    res.json(shoes);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to get shoes" });
-  }
+app.get('/create.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'create.html'));
 });
 
-// Optional: delete all shoes (for testing)
-app.delete("/shoes", async (req, res) => {
-  try {
-    await shoesCollection.deleteMany({});
-    res.json({ message: "All shoes deleted!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to delete shoes" });
-  }
+// Example: View all shoes
+app.get('/retrieve.html', async (req, res) => {
+    try {
+        const shoes = await db.collection('shoes').find({}).toArray();
+        res.json(shoes); // We'll handle front-end rendering later
+    } catch (err) {
+        res.status(500).send("Error retrieving shoes");
+    }
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Example: Add a shoe
+app.post('/create.html', async (req, res) => {
+    const { support, cushion, brand, price } = req.body;
+    try {
+        await db.collection('shoes').insertOne({ support, cushion, brand, price });
+        res.redirect('/retrieve.html'); // After adding, go to view shoes
+    } catch (err) {
+        res.status(500).send("Error adding shoe");
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
