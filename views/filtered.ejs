@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Filtered Shoes</title>
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/preferences">Preferences</a>
+    <a href="/about">About</a>
+    <a href="/recent">Recent Searches</a>
+  </nav>
+
+  <div class="container">
+    <h1>Filtered Shoes</h1>
+
+    <% if (shoes.length === 0) { %>
+      <p>No shoes match your filters.</p>
+    <% } else { %>
+      <div class="grid">
+        <% shoes.forEach(shoe => { %>
+          <div class="card">
+            <a href="/shoe/<%= shoe._id %>">
+              <img src="/pics/<%= shoe.image %>" alt="<%= shoe.name %>">
+              <h3><%= shoe.name %></h3>
+            </a>
+            <p><strong>Brand:</strong> <%= shoe.brand %></p>
+            <p><strong>Type:</strong> <%= shoe.category %></p>
+            <p><strong>Cushion:</strong> <%= shoe.cushion %></p>
+            <p><strong>Price:</strong> $<%= shoe.price %></p>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <footer>
+    &copy; 2025 Running Shoe Picker
+  </footer>
+</body>
+</html>

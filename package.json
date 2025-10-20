@@ -23,6 +23,7 @@
   "homepage": "https://github.com/caidendawes/running-shoe-app#readme",
   "dependencies": {
     "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
     "express": "^4.21.2",
     "mongodb": "^6.20.0"
   }

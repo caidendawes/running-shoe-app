@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Shoes - Shoe Picker</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="create.html">Add Shoes</a>
+        <a href="retrieve.html">View Shoes</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <div class="meat">
+        <h1>Add a New Shoe</h1>
+        <form action="/create" method="post">
+            <label for="shoeName">Shoe Name:</label>
+            <input type="text" id="shoeName" name="shoeName" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="3" required></textarea>
+
+            <label for="imageUrl">Image URL:</label>
+            <input type="text" id="imageUrl" name="imageUrl" placeholder="images/shoe.jpg">
+
+            <button type="submit">Add Shoe</button>
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2025 Shoe Picker
+    </footer>
+</body>
+</html>

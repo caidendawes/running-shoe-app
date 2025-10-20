@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shoe Preferences</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="/">Home</a>
+      <a href="/preferences">Preferences</a>
+      <a href="/about">About</a>
+      <a href="/create.html">Create</a>
+      <a href="/retrieve.html">Retrieve</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Select Your Preferences</h1>
+    <form action="/filter" method="get">
+      <label for="support">Type:</label>
+      <select name="support" id="support">
+        <option value="any">Any</option>
+        <option value="Support">Support</option>
+        <option value="Neutral">Neutral</option>
+        <option value="Workout/Race">Workout/Race</option>
+      </select>
+
+      <label for="cushion">Cushion:</label>
+      <select name="cushion" id="cushion">
+        <option value="any">Any</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+
+      <label for="brand">Brand:</label>
+      <select name="brand" id="brand">
+        <option value="any">Any</option>
+        <option value="Nike">Nike</option>
+        <option value="Brooks">Brooks</option>
+        <option value="ASICS">ASICS</option>
+        <option value="Saucony">Saucony</option>
+        <option value="Hoka">Hoka</option>
+        <option value="Adidas">Adidas</option>
+      </select>
+
+      <label for="price">Price:</label>
+      <select name="price" id="price">
+        <option value="any">Any</option>
+        <option value="budget">Under $100</option>
+        <option value="mid">$100–$150</option>
+        <option value="premium">Over $150</option>
+      </select>
+
+      <button class="btn" type="submit">Filter Shoes</button>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2025 Running Shoe Picker
+  </footer>
+</body>
+</html>

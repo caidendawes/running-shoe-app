@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Recent Searches</title>
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="/">Home</a>
+      <a href="/preferences">Preferences</a>
+      <a href="/about">About</a>
+      <a href="/recent">Recent Searches</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Recent Searches</h1>
+
+    <% if (recent.length === 0) { %>
+      <p>No searches yet.</p>
+    <% } else { %>
+      <ul class="recent-list">
+        <% recent.forEach(search => { %>
+          <li>
+            <strong>Date:</strong> <%= search.date.toLocaleString() %> -
+            <strong>Support:</strong> <%= search.support || "Any" %>,
+            <strong>Cushion:</strong> <%= search.cushion || "Any" %>,
+            <strong>Brand:</strong> <%= search.brand || "Any" %>,
+            <strong>Price:</strong> <%= search.price || "Any" %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+
+  <footer>
+    &copy; 2025 Running Shoe Picker
+  </footer>
+</body>
+</html>
