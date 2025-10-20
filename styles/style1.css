@@ -1,0 +1,10 @@
+.myH1 {font-family:Arial; font-size:24pt; color: blue; text-align: center;}
+.myImg {width:256px;display:block;margin: auto}
+.myP {font-family:Arial; font-size:12pt; color: red}
+.myH2a {font-family:Arial;color: orange}
+.myH2b {font-family:Arial;color: greenyellow}
+.myA {color: black}
+
+.myTextFont {font-family:Arial; font-weight:bold; font-size:20pt; color: blue}
+.myOrangeBackground {background: orange}
+.myTextWidth {width:25%}

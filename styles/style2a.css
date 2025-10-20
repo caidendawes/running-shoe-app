@@ -1,0 +1,5 @@
+.main { display:flex; flex-direction: row;}
+.menu { background: #a7a8aa; width:25%;}
+.meat { background: #007a86; Width:75%}
+li    {display: inline; text-align: center;}
+li:after {content: " | "}
