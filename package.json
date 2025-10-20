@@ -1,0 +1,23 @@
+{
+  "name": "shoe-picker",
+  "version": "1.0.0",
+  "description": "A simple Running Shoe Picker App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caidendawes/running-shoe-app.git"
+  },
+  "keywords": ["running", "shoes", "app"],
+  "author": "Caiden Dawes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caidendawes/running-shoe-app/issues"
+  },
+  "homepage": "https://github.com/caidendawes/running-shoe-app#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
