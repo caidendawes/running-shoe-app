@@ -1,0 +1,15 @@
+<ul id="shoe-list"></ul>
+<script>
+async function loadShoes() {
+    const res = await fetch('/api/shoes');
+    const shoes = await res.json();
+    const list = document.getElementById('shoe-list');
+    list.innerHTML = "";
+    shoes.forEach(shoe => {
+        const li = document.createElement('li');
+        li.textContent = `${shoe.support} | ${shoe.cushion} | ${shoe.brand} | ${shoe.price}`;
+        list.appendChild(li);
+    });
+}
+loadShoes();
+</script>

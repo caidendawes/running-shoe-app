@@ -1,62 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Select Running Shoe</title>
-    <link href="styles/style1.css" rel="stylesheet">
-    <link href="styles/style2.css" rel="stylesheet">
-</head>
-<body>
-    <div class="main">
-
-        <div class="menu">
-            <h2 class="myA">Navigation</h2>
-            <ul class="myP">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="retrieve.html">View Shoes</a></li>
-                <li><a href="update.html">Update Shoes</a></li>
-                <li><a href="delete.html">Delete Shoes</a></li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-        </div>
-
-        <div class="meat">
-            <p class="myH1">Select Your Running Shoe</p>
-            <br>
-            <img src="pics/ghost16.jpg" class="myImg" alt="Running Shoe Image">
-            <br><br><br>
-
-            <form class="myOrangeBackground">
-                <label>Shoe Type:</label><br>
-                <input type="radio" name="support" value="support"> Support<br>
-                <input type="radio" name="support" value="neutral"> Neutral<br><br>
-
-                <label>Cushion Level:</label>
-                <select class="myTextWidth myTextFont">
-                    <option>Light Cushion</option>
-                    <option>Medium Cushion</option>
-                    <option>High Cushion</option>
-                </select><br><br>
-
-                <label>Brand:</label>
-                <select class="myTextWidth myTextFont">
-                    <option>Nike</option>
-                    <option>Adidas</option>
-                    <option>Asics</option>
-                    <option>Brooks</option>
-                </select><br><br>
-
-                <label>Price Range:</label>
-                <select class="myTextWidth myTextFont">
-                    <option>$50 - $100</option>
-                    <option>$101 - $150</option>
-                    <option>$151 - $200</option>
-                    <option>$200+</option>
-                </select><br><br>
-
-                <input type="submit" value="Find Shoes"><br><br>
-            </form>
-        </div>
-
-    </div>
-</body>
-</html>
+<form class="myOrangeBackground" action="/add-shoe" method="POST">
+    <input type="radio" name="support" value="support" required> Support<br>
+    <input type="radio" name="support" value="neutral"> Neutral<br>
+    <select name="cushion" required>
+        <option>Light Cushion</option>
+        <option>Medium Cushion</option>
+        <option>High Cushion</option>
+    </select><br>
+    <select name="brand" required>
+        <option>Nike</option>
+        <option>Adidas</option>
+        <option>Asics</option>
+        <option>Brooks</option>
+    </select><br>
+    <select name="price" required>
+        <option>$50 - $100</option>
+        <option>$101 - $150</option>
+        <option>$151 - $200</option>
+        <option>$200+</option>
+    </select><br>
+    <input type="submit" value="Find Shoes">
+</form>
