@@ -11,7 +11,6 @@
       <a href="/">Home</a>
       <a href="/preferences">Preferences</a>
       <a href="/about">About</a>
-      <a href="/create">Create</a>
       <a href="/recent">Recent Searches</a>
     </div>
   </nav>
@@ -19,7 +18,7 @@
   <div class="container">
     <h1>Filtered Shoes</h1>
 
-    <% if (shoes.length === 0) { %>
+    <% if (!shoes || shoes.length === 0) { %>
       <p>No shoes match your filters.</p>
     <% } else { %>
       <div class="grid">
