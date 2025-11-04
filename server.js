@@ -24,13 +24,14 @@ MongoClient.connect(process.env.MONGODB_URI)
 // Track recent searches (in memory)
 let recentSearches = [];
 
-// Routes
+// ===== GET ROUTES =====
 app.get("/", (req, res) => res.render("index"));
 app.get("/preferences", (req, res) => res.render("preferences"));
 app.get("/about", (req, res) => res.render("about"));
+app.get("/create", (req, res) => res.render("create"));
 app.get("/recent", (req, res) => res.render("recent", { recent: recentSearches }));
 
-// CREATE - add new shoe
+// ===== CREATE =====
 app.post("/create", async (req, res) => {
   try {
     const { shoeName, brand, category, cushion, price, description, imageUrl } = req.body;
@@ -55,7 +56,7 @@ app.post("/create", async (req, res) => {
   }
 });
 
-// FILTER shoes
+// ===== FILTER =====
 app.get("/filter", async (req, res) => {
   try {
     const { support, cushion, brand, price } = req.query;
@@ -88,7 +89,7 @@ app.get("/filter", async (req, res) => {
   }
 });
 
-// VIEW shoe details
+// ===== VIEW SHOE DETAILS =====
 app.get("/shoe/:id", async (req, res) => {
   try {
     const shoe = await shoesCollection.findOne({ _id: new ObjectId(req.params.id) });
@@ -100,7 +101,7 @@ app.get("/shoe/:id", async (req, res) => {
   }
 });
 
-// UPDATE shoe
+// ===== UPDATE =====
 app.post("/update/:id", async (req, res) => {
   try {
     const { shoeName, brand, category, cushion, price, description, imageUrl } = req.body;
@@ -124,7 +125,7 @@ app.post("/update/:id", async (req, res) => {
   }
 });
 
-// DELETE shoe
+// ===== DELETE =====
 app.post("/delete/:id", async (req, res) => {
   try {
     await shoesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
@@ -135,5 +136,5 @@ app.post("/delete/:id", async (req, res) => {
   }
 });
 
-// Start server
+// ===== START SERVER =====
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
