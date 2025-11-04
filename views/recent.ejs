@@ -11,6 +11,7 @@
       <a href="/">Home</a>
       <a href="/preferences">Preferences</a>
       <a href="/about">About</a>
+      <a href="/create">Create</a>
       <a href="/recent">Recent Searches</a>
     </div>
   </nav>
@@ -25,7 +26,7 @@
         <% recent.forEach(search => { %>
           <li>
             <strong>Date:</strong> <%= search.date.toLocaleString() %> -
-            <strong>Support:</strong> <%= search.support || "Any" %>,
+            <strong>Type:</strong> <%= search.support || "Any" %>,
             <strong>Cushion:</strong> <%= search.cushion || "Any" %>,
             <strong>Brand:</strong> <%= search.brand || "Any" %>,
             <strong>Price:</strong> <%= search.price || "Any" %>

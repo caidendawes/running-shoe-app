@@ -6,42 +6,55 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files
+// Serve static files (CSS, images)
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-// Hardcoded shoes array
-let shoes = [
-  { _id: 1, name: "Brooks Adrenaline GTS 24", brand: "Brooks", category: "Support", cushion: "High", price: 160, image: "brooks_adrenaline.jpg" },
-  { _id: 2, name: "Asics Kayano", brand: "ASICS", category: "Support", cushion: "High", price: 160, image: "asics_kayano.jpg" },
-  { _id: 3, name: "Hoka Gaviota", brand: "Hoka", category: "Support", cushion: "High", price: 180, image: "hoka_gaviota.jpg" },
-  { _id: 4, name: "Brooks Ghost", brand: "Brooks", category: "Neutral", cushion: "Medium", price: 120, image: "brooks_ghost.jpg" },
-  { _id: 5, name: "Brooks Trace", brand: "Brooks", category: "Neutral", cushion: "Medium", price: 100, image: "brooks_trace.jpg" },
-  { _id: 6, name: "Hoka Solimar", brand: "Hoka", category: "Neutral", cushion: "Medium", price: 100, image: "hoka_solimar.jpg" },
-  { _id: 7, name: "Saucony Guide", brand: "Saucony", category: "Support", cushion: "Medium", price: 140, image: "saucony_guide.jpg" },
-  { _id: 8, name: "Saucony Ride", brand: "Saucony", category: "Neutral", cushion: "Medium", price: 130, image: "saucony_ride.jpg" },
-  { _id: 9, name: "Nike Zoom Fly", brand: "Nike", category: "Workout/Race", cushion: "Low", price: 200, image: "nike_zoomfly.jpg" },
-  { _id: 10, name: "Nike Vaporfly", brand: "Nike", category: "Workout/Race", cushion: "Low", price: 250, image: "nike_vaporfly.jpg" },
-  { _id: 11, name: "Brooks Hyperion", brand: "Brooks", category: "Workout/Race", cushion: "Low", price: 200, image: "brooks_hyperion.jpg" },
-  { _id: 12, name: "Adidas Adios Pro", brand: "Adidas", category: "Workout/Race", cushion: "Low", price: 220, image: "adidas_adiospro.jpg" },
-  { _id: 13, name: "Saucony Endorphin Pro", brand: "Saucony", category: "Workout/Race", cushion: "Low", price: 220, image: "saucony_endorphinpro.jpg" },
-];
+// MongoDB setup
+const client = new MongoClient(process.env.MONGODB_URI);
+let shoesCollection;
+
+async function startDB() {
+  try {
+    await client.connect();
+    const db = client.db("running-shoe-app");
+    shoesCollection = db.collection("shoes");
+    console.log("Connected to MongoDB Atlas");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB", err);
+  }
+}
+
+startDB();
 
 // Track recent searches
 let recentSearches = [];
 
 // Routes
+
+// Home page
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.render("index");
 });
 
-app.get("/preferences", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "preferences.html"));
+// Preferences page with dynamic filter options
+app.get("/preferences", async (req, res) => {
+  try {
+    const brands = await shoesCollection.distinct("brand");
+    const categories = await shoesCollection.distinct("category");
+    const cushions = await shoesCollection.distinct("cushion");
+
+    res.render("preferences", { brands, categories, cushions });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading preferences");
+  }
 });
 
+// About page (still static)
 app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "about.html"));
+  res.render("about");
 });
 
 // Recent searches page
@@ -50,35 +63,71 @@ app.get("/recent", (req, res) => {
 });
 
 // Filter shoes
-app.get("/filter", (req, res) => {
+app.get("/filter", async (req, res) => {
   const { support, cushion, brand, price } = req.query;
 
   // Save recent search
   recentSearches.unshift({ support, cushion, brand, price, date: new Date() });
   if (recentSearches.length > 10) recentSearches.pop();
 
-  let filtered = shoes.filter(shoe => {
-    if (support && support !== "any" && shoe.category !== support) return false;
-    if (cushion && cushion !== "any" && shoe.cushion !== cushion) return false;
-    if (brand && brand !== "any" && shoe.brand !== brand) return false;
+  let query = {};
 
-    if (price) {
-      if (price === "budget" && shoe.price >= 100) return false;
-      if (price === "mid" && (shoe.price < 100 || shoe.price > 150)) return false;
-      if (price === "premium" && shoe.price <= 150) return false;
-    }
+  if (support && support !== "any") query.category = support;
+  if (cushion && cushion !== "any") query.cushion = cushion;
+  if (brand && brand !== "any") query.brand = brand;
 
-    return true;
-  });
+  // Price filter
+  if (price && price !== "any") {
+    if (price === "budget") query.price = { $lt: 100 };
+    else if (price === "mid") query.price = { $gte: 100, $lte: 150 };
+    else if (price === "premium") query.price = { $gt: 150 };
+  }
 
-  res.render("filtered", { shoes: filtered });
+  try {
+    const shoes = await shoesCollection.find(query).toArray();
+    res.render("filtered", { shoes });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error filtering shoes");
+  }
 });
 
 // Shoe detail page
-app.get("/shoe/:id", (req, res) => {
-  const shoe = shoes.find(s => s._id == req.params.id);
-  if (!shoe) return res.status(404).send("Shoe not found");
-  res.render("shoe_detail", { shoe });
+app.get("/shoe/:id", async (req, res) => {
+  try {
+    const shoe = await shoesCollection.findOne({ _id: new ObjectId(req.params.id) });
+    if (!shoe) return res.status(404).send("Shoe not found");
+    res.render("shoe_detail", { shoe });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading shoe details");
+  }
 });
 
+// Create shoe page
+app.get("/create", (req, res) => {
+  res.render("create");
+});
+
+// Handle creating a new shoe
+app.post("/create", async (req, res) => {
+  const { shoeName, description, imageUrl, brand, category, cushion, price } = req.body;
+  try {
+    await shoesCollection.insertOne({
+      name: shoeName,
+      description,
+      image: imageUrl,
+      brand,
+      category,
+      cushion,
+      price: Number(price),
+    });
+    res.redirect("/preferences");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error adding new shoe");
+  }
+});
+
+// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

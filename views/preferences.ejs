@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Shoe Preferences</title>
-  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="/styles/style.css">
 </head>
 <body>
   <nav>
@@ -11,8 +11,8 @@
       <a href="/">Home</a>
       <a href="/preferences">Preferences</a>
       <a href="/about">About</a>
-      <a href="/create.html">Create</a>
-      <a href="/retrieve.html">Retrieve</a>
+      <a href="/create">Create</a>
+      <a href="/recent">Recent Searches</a>
     </div>
   </nav>
 
@@ -22,28 +22,25 @@
       <label for="support">Type:</label>
       <select name="support" id="support">
         <option value="any">Any</option>
-        <option value="Support">Support</option>
-        <option value="Neutral">Neutral</option>
-        <option value="Workout/Race">Workout/Race</option>
+        <% categories.forEach(category => { %>
+          <option value="<%= category %>"><%= category %></option>
+        <% }) %>
       </select>
 
       <label for="cushion">Cushion:</label>
       <select name="cushion" id="cushion">
         <option value="any">Any</option>
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
+        <% cushions.forEach(c => { %>
+          <option value="<%= c %>"><%= c %></option>
+        <% }) %>
       </select>
 
       <label for="brand">Brand:</label>
       <select name="brand" id="brand">
         <option value="any">Any</option>
-        <option value="Nike">Nike</option>
-        <option value="Brooks">Brooks</option>
-        <option value="ASICS">ASICS</option>
-        <option value="Saucony">Saucony</option>
-        <option value="Hoka">Hoka</option>
-        <option value="Adidas">Adidas</option>
+        <% brands.forEach(b => { %>
+          <option value="<%= b %>"><%= b %></option>
+        <% }) %>
       </select>
 
       <label for="price">Price:</label>
