@@ -6,93 +6,89 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve static files (CSS, images)
+// Serve static files
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 // MongoDB setup
-const client = new MongoClient(process.env.MONGODB_URI);
-let shoesCollection;
-
-async function startDB() {
-  try {
-    await client.connect();
-    const db = client.db("running-shoe-app");
-    shoesCollection = db.collection("shoes");
+let db, shoesCollection;
+MongoClient.connect(process.env.MONGODB_URI)
+  .then(client => {
+    db = client.db("shoe-picker"); // database name
+    shoesCollection = db.collection("shoes"); // collection name
     console.log("Connected to MongoDB Atlas");
-  } catch (err) {
-    console.error("Failed to connect to MongoDB", err);
-  }
-}
+  })
+  .catch(err => console.error(err));
 
-startDB();
-
-// Track recent searches
+// Track recent searches (in memory)
 let recentSearches = [];
 
 // Routes
+app.get("/", (req, res) => res.render("index"));
+app.get("/preferences", (req, res) => res.render("preferences"));
+app.get("/about", (req, res) => res.render("about"));
+app.get("/recent", (req, res) => res.render("recent", { recent: recentSearches }));
 
-// Home page
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-// Preferences page with dynamic filter options
-app.get("/preferences", async (req, res) => {
+// CREATE - add new shoe
+app.post("/create", async (req, res) => {
   try {
-    const brands = await shoesCollection.distinct("brand");
-    const categories = await shoesCollection.distinct("category");
-    const cushions = await shoesCollection.distinct("cushion");
+    const { shoeName, brand, category, cushion, price, description, imageUrl } = req.body;
 
-    res.render("preferences", { brands, categories, cushions });
+    const newShoe = {
+      name: shoeName,
+      brand: brand || "Unknown",
+      category: category || "Neutral",
+      cushion: cushion || "Medium",
+      price: parseInt(price) || 120,
+      image: imageUrl || "default.jpg",
+      description: description || ""
+    };
+
+    const result = await shoesCollection.insertOne(newShoe);
+    console.log("Inserted shoe with _id:", result.insertedId);
+
+    res.send(`Shoe added successfully! <a href="/">Go Home</a>`);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error loading preferences");
+    res.status(500).send("Error adding shoe to database");
   }
 });
 
-// About page (still static)
-app.get("/about", (req, res) => {
-  res.render("about");
-});
-
-// Recent searches page
-app.get("/recent", (req, res) => {
-  res.render("recent", { recent: recentSearches });
-});
-
-// Filter shoes
+// FILTER shoes
 app.get("/filter", async (req, res) => {
-  const { support, cushion, brand, price } = req.query;
-
-  // Save recent search
-  recentSearches.unshift({ support, cushion, brand, price, date: new Date() });
-  if (recentSearches.length > 10) recentSearches.pop();
-
-  let query = {};
-
-  if (support && support !== "any") query.category = support;
-  if (cushion && cushion !== "any") query.cushion = cushion;
-  if (brand && brand !== "any") query.brand = brand;
-
-  // Price filter
-  if (price && price !== "any") {
-    if (price === "budget") query.price = { $lt: 100 };
-    else if (price === "mid") query.price = { $gte: 100, $lte: 150 };
-    else if (price === "premium") query.price = { $gt: 150 };
-  }
-
   try {
-    const shoes = await shoesCollection.find(query).toArray();
+    const { support, cushion, brand, price } = req.query;
+
+    // Save recent search
+    recentSearches.unshift({ support, cushion, brand, price, date: new Date() });
+    if (recentSearches.length > 10) recentSearches.pop();
+
+    // Build query for MongoDB
+    let query = {};
+    if (support && support !== "any") query.category = support;
+    if (cushion && cushion !== "any") query.cushion = cushion;
+    if (brand && brand !== "any") query.brand = brand;
+
+    let shoes = await shoesCollection.find(query).toArray();
+
+    if (price) {
+      shoes = shoes.filter(shoe => {
+        if (price === "budget" && shoe.price >= 100) return false;
+        if (price === "mid" && (shoe.price < 100 || shoe.price > 150)) return false;
+        if (price === "premium" && shoe.price <= 150) return false;
+        return true;
+      });
+    }
+
     res.render("filtered", { shoes });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error filtering shoes");
+    res.status(500).send("Error retrieving shoes");
   }
 });
 
-// Shoe detail page
+// VIEW shoe details
 app.get("/shoe/:id", async (req, res) => {
   try {
     const shoe = await shoesCollection.findOne({ _id: new ObjectId(req.params.id) });
@@ -100,32 +96,42 @@ app.get("/shoe/:id", async (req, res) => {
     res.render("shoe_detail", { shoe });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error loading shoe details");
+    res.status(500).send("Error retrieving shoe");
   }
 });
 
-// Create shoe page
-app.get("/create", (req, res) => {
-  res.render("create");
-});
-
-// Handle creating a new shoe
-app.post("/create", async (req, res) => {
-  const { shoeName, description, imageUrl, brand, category, cushion, price } = req.body;
+// UPDATE shoe
+app.post("/update/:id", async (req, res) => {
   try {
-    await shoesCollection.insertOne({
-      name: shoeName,
-      description,
-      image: imageUrl,
-      brand,
-      category,
-      cushion,
-      price: Number(price),
-    });
-    res.redirect("/preferences");
+    const { shoeName, brand, category, cushion, price, description, imageUrl } = req.body;
+    await shoesCollection.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: {
+          name: shoeName,
+          brand: brand,
+          category: category,
+          cushion: cushion,
+          price: parseInt(price),
+          description: description,
+          image: imageUrl
+        }
+      }
+    );
+    res.send(`Shoe updated! <a href="/shoe/${req.params.id}">View Shoe</a>`);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error adding new shoe");
+    res.status(500).send("Error updating shoe");
+  }
+});
+
+// DELETE shoe
+app.post("/delete/:id", async (req, res) => {
+  try {
+    await shoesCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+    res.send(`Shoe deleted! <a href="/filter">Back to Shoes</a>`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting shoe");
   }
 });
 
