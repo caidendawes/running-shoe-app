@@ -7,12 +7,10 @@
 </head>
 <body>
   <nav>
-    <div class="nav-container">
-      <a href="/">Home</a>
-      <a href="/preferences">Preferences</a>
-      <a href="/about">About</a>
-      <a href="/recent">Recent Searches</a>
-    </div>
+    <a href="/">Home</a>
+    <a href="/preferences">Preferences</a>
+    <a href="/about">About</a>
+    <a href="/recent">Recent Searches</a>
   </nav>
 
   <div class="container">
@@ -25,7 +23,7 @@
         <% shoes.forEach(shoe => { %>
           <div class="card">
             <a href="/shoe/<%= shoe._id %>">
-              <img src="/pics/<%= shoe.image %>" alt="<%= shoe.name %>">
+              <img src="<%= shoe.image %>" alt="<%= shoe.name %>">
               <h3><%= shoe.name %></h3>
             </a>
             <p><strong>Brand:</strong> <%= shoe.brand %></p>

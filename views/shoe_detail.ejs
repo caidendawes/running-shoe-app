@@ -7,13 +7,10 @@
 </head>
 <body>
   <nav>
-    <div class="nav-container">
-      <a href="/">Home</a>
-      <a href="/preferences">Preferences</a>
-      <a href="/about">About</a>
-      <a href="/create">Create</a>
-      <a href="/recent">Recent Searches</a>
-    </div>
+    <a href="/">Home</a>
+    <a href="/preferences">Preferences</a>
+    <a href="/about">About</a>
+    <a href="/recent">Recent Searches</a>
   </nav>
 
   <div class="container">
@@ -21,7 +18,7 @@
 
     <div class="grid">
       <div class="card" style="max-width: 350px; margin: 0 auto;">
-        <img src="/pics/<%= shoe.image %>" alt="<%= shoe.name %>">
+        <img src="<%= shoe.image %>" alt="<%= shoe.name %>">
         <h3><%= shoe.name %></h3>
         <p><strong>Brand:</strong> <%= shoe.brand %></p>
         <p><strong>Type:</strong> <%= shoe.category %></p>
@@ -34,7 +31,7 @@
     </div>
 
     <div style="margin-top: 20px;">
-      <a href="/filter" class="btn">Back to Filtered Shoes</a>
+      <a href="/preferences" class="btn">Back to Filtered Shoes</a>
     </div>
   </div>
 
