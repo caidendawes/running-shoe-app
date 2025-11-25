@@ -89,21 +89,24 @@ app.get("/shoe/:id", (req, res) => {
   res.render("shoe_detail", { shoe });
 });
 
-// Create shoe (hardcoded push)
+// Create shoe (all fields)
 app.post("/create", (req, res) => {
-  const { shoeName, description, imageUrl } = req.body;
+  const { shoeName, brand, category, cushion, price, description, imageUrl } = req.body;
+
   const newShoe = {
     _id: shoes.length + 1,
     name: shoeName,
-    category: "Neutral",
-    brand: "Nike",
-    cushion: "Medium",
-    price: 100,
+    brand,
+    category,
+    cushion,
+    price: Number(price),
     description,
     image: imageUrl
   };
+
   shoes.push(newShoe);
-  res.redirect("/preferences");
+
+  res.redirect("/preferences"); // go to filter page after adding
 });
 
 // ===== Start server =====
