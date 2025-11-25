@@ -30,17 +30,26 @@ let shoes = [
 // Track recent searches
 let recentSearches = [];
 
-// Routes
+// ===== Routes =====
+
+// Home
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.render("index"); // index.ejs
 });
 
+// Preferences
 app.get("/preferences", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "preferences.html"));
+  res.render("preferences"); // preferences.ejs
 });
 
+// About
 app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "about.html"));
+  res.render("about"); // about.ejs
+});
+
+// Create page
+app.get("/create", (req, res) => {
+  res.render("create"); // create.ejs
 });
 
 // Recent searches page
@@ -80,7 +89,7 @@ app.get("/shoe/:id", (req, res) => {
   res.render("shoe_detail", { shoe });
 });
 
-// Create shoe (hardcoded push, optional)
+// Create shoe (hardcoded push)
 app.post("/create", (req, res) => {
   const { shoeName, description, imageUrl } = req.body;
   const newShoe = {
@@ -97,4 +106,5 @@ app.post("/create", (req, res) => {
   res.redirect("/preferences");
 });
 
+// ===== Start server =====
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
