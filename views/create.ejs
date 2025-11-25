@@ -11,7 +11,7 @@
         <a href="/">Home</a>
         <a href="/create">Add Shoes</a>
         <a href="/preferences">Preferences</a>
-        <a href="/recent">Recent Searches</a>
+        <a href="/retrieve.html">View Shoes</a>
         <a href="/about">About</a>
     </nav>
 
@@ -21,38 +21,18 @@
             <label for="shoeName">Shoe Name:</label>
             <input type="text" id="shoeName" name="shoeName" required>
 
-            <label for="brand">Brand:</label>
-            <input type="text" id="brand" name="brand" required>
-
-            <label for="category">Type:</label>
-            <select name="category" id="category" required>
-                <option value="Support">Support</option>
-                <option value="Neutral">Neutral</option>
-                <option value="Workout/Race">Workout/Race</option>
-            </select>
-
-            <label for="cushion">Cushion:</label>
-            <select name="cushion" id="cushion" required>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-            </select>
-
-            <label for="price">Price:</label>
-            <input type="number" id="price" name="price" required>
-
             <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="3"></textarea>
+            <textarea id="description" name="description" rows="3" required></textarea>
 
-            <label for="image">Image URL:</label>
-            <input type="text" id="image" name="image" placeholder="https://example.com/shoe.jpg">
+            <label for="imageUrl">Image URL (local file in /pics):</label>
+            <input type="text" id="imageUrl" name="imageUrl" placeholder="brooks_ghost.jpg">
 
-            <button type="submit" class="btn">Add Shoe</button>
+            <button type="submit">Add Shoe</button>
         </form>
     </div>
 
     <footer>
-        &copy; 2025 Running Shoe Picker
+        &copy; 2025 Shoe Picker
     </footer>
 </body>
 </html>
